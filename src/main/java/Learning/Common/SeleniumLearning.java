@@ -1,4 +1,4 @@
-package Learning;
+package Learning.Common;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;

@@ -1,16 +1,15 @@
-package Learning;
+package Learning.Common;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
 
 import java.time.Duration;
-import java.util.Scanner;
 
-public class DriverLearning {
+public class LocatorsLearning {
+
+    static WebDriver driver;
 
     public static void main(String[] args) throws Exception {
         String url = "https://rahulshettyacademy.com/locatorspractice/";
@@ -20,7 +19,7 @@ public class DriverLearning {
         String email = "bashnag@email.com";
         String phoneNumber = "0139999999";
 
-        Scanner scanner = new Scanner(System.in);
+
         //LOCATORS
         By userNameTextBox = By.id("inputUsername");
         By passwordTextBox = By.name("inputPassword");
@@ -39,23 +38,7 @@ public class DriverLearning {
         By logoutButton = By.xpath("//button[contains(text(),'Log Out')]");
 
         //SET WEBDRIVER
-        System.out.println("Enter driver type: ");
-        String driverType = scanner.nextLine();
-
-        WebDriver driver;
-        if (driverType.equals("chrome")) {
-            driver = new ChromeDriver();
-            System.out.println("using chrome");
-        } else if (driverType.equals("edge")) {
-            driver = new EdgeDriver();
-            System.out.println("using edge");
-        } else if (driverType.equals("mozilla")) {
-            driver = new FirefoxDriver();
-            System.out.println("using firefox");
-        } else {
-            driver = new ChromeDriver();
-            System.out.println("using chrome - default");
-        }
+        driver = new ChromeDriver();
         //set implicit wait to avoid failure
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
 
@@ -99,7 +82,7 @@ public class DriverLearning {
         driver.findElement(signInButton).click();
 
         //VERIFY LOGIN SUCCESS
-        String successMessage = getPassword(driver, successLoginMessage);
+        String successMessage = getPassword(successLoginMessage);
         Assert.assertEquals(successMessage, "You are successfully logged in.");
         System.out.println(successMessage);
 
@@ -113,7 +96,7 @@ public class DriverLearning {
 
     }
 
-    public static String getPassword(WebDriver driver, By element) {
+    public static String getPassword(By element) {
         return driver.findElement(element).getText();
     }
 }

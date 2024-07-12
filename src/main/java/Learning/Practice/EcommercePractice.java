@@ -1,4 +1,4 @@
-package Learning;
+package Learning.Practice;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
