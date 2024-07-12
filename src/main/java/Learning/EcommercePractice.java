@@ -72,8 +72,6 @@ public class EcommercePractice {
         applyPromoCode("rahulshettyacademy");
         verifyCodeApplied();
 
-
-
         //CLEAN UP
         Thread.sleep(1500);
         driver.quit();
