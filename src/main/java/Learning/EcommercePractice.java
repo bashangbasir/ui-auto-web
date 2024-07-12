@@ -4,6 +4,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
 import java.time.Duration;
@@ -23,13 +25,17 @@ public class EcommercePractice {
     private static By productQuantity = By.cssSelector("div.stepper-input input.quantity");
     private static By cartPreviewPanel = By.cssSelector("div.cart-preview.active");
     private static By cartItem = By.xpath("//div[@class='cart-preview active']//li[@class='cart-item']");
-    private static By ProceedToCheckoutButton = By.xpath("//button[text()='PROCEED TO CHECKOUT']");
+    private static By proceedToCheckoutButton = By.xpath("//button[text()='PROCEED TO CHECKOUT']");
+    private static By promoCodeInput = By.cssSelector("input.promoCode");
+    private static By applyPromoButton = By.cssSelector("button.promoBtn");
+    private static By promoInfoMessage = By.cssSelector("span.promoInfo");
 
 
     
 
     private static String url = "https://rahulshettyacademy.com/seleniumPractise/";
     private static WebDriver driver;
+    private static WebDriverWait wait;
     private static int totalPrice = 0;
     private static int items = 0;
 
@@ -42,6 +48,7 @@ public class EcommercePractice {
         driver.get(url);
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
 
         // SCRIPT
@@ -55,14 +62,17 @@ public class EcommercePractice {
         WebElement cartPreview = driver.findElement(cartPreviewPanel);
         Assert.assertTrue(cartPreview.isDisplayed());
         //VERIFY NUMBER OF ITEM IN CART PREVIEW
-        Thread.sleep(1000);
-        List<WebElement> cartItems = driver.findElements(cartItem);
+        List<WebElement> cartItems = wait.until(ExpectedConditions.numberOfElementsToBe(cartItem,2));
         Assert.assertEquals(cartItems.size(), items);
-        cartPreview.findElement(ProceedToCheckoutButton).click();
+        cartPreview.findElement(proceedToCheckoutButton).click();
         // PROCEED TO CHECKOUT PAGE AND VERIFY IN CHECKOUT PAGE
-        Thread.sleep(1000);
-        Assert.assertEquals(driver.getTitle(), "GreenKart - veg and fruits kart");
-        Assert.assertEquals(driver.getCurrentUrl(), "https://rahulshettyacademy.com/seleniumPractise/#/cart");
+        wait.until(ExpectedConditions.titleIs("GreenKart - veg and fruits kart"));
+        wait.until(ExpectedConditions.urlToBe("https://rahulshettyacademy.com/seleniumPractise/#/cart"));
+
+        applyPromoCode("rahulshettyacademy");
+        verifyCodeApplied();
+
+
 
         //CLEAN UP
         Thread.sleep(1500);
@@ -88,4 +98,20 @@ public class EcommercePractice {
             }
         }
     }
+
+    public static void applyPromoCode(String promoCode){
+        driver.findElement(promoCodeInput).sendKeys(promoCode);
+        driver.findElement(applyPromoButton).click();
+    }
+
+    public static void verifyCodeApplied(){
+        WebElement promoMessageEl = wait.until(ExpectedConditions.visibilityOfElementLocated(promoInfoMessage));
+        String message = promoMessageEl.getText();
+        String messageColour = promoMessageEl.getAttribute("style");
+        Assert.assertEquals(message, "Code applied ..!");
+        Assert.assertTrue(messageColour.contains("color: green"));
+
+    }
+
+
 }
