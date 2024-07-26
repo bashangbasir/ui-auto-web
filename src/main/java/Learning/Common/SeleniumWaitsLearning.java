@@ -1,14 +1,18 @@
 package Learning.Common;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
 import java.time.Duration;
+import java.util.function.Function;
 
 public class SeleniumWaitsLearning {
 
@@ -21,7 +25,12 @@ public class SeleniumWaitsLearning {
     private static By proceedToCheckoutButton = By.xpath("//button[text()='PROCEED TO CHECKOUT']");
 
 
-    public static void main(String[] args) {
+    // THE INTERNET WEBSITE
+    private static By startButton = By.cssSelector("div[id='start'] button");
+    private static By helloWorld = By.cssSelector("div[id='finish'] h4");
+
+
+    public static void main(String[] args) throws InterruptedException {
 
         WebDriver driver = new ChromeDriver();
 
@@ -29,7 +38,7 @@ public class SeleniumWaitsLearning {
         // implicit wait will wait before throw exception for every driver command
         driver.get("https://rahulshettyacademy.com/seleniumPractise/#/");
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
-        driver.manage().window().maximize();
+        //driver.manage().window().maximize();
 
         driver.findElement(cartIcon).click();
         WebElement cartPreview = driver.findElement(cartPreviewPanel);
@@ -43,5 +52,33 @@ public class SeleniumWaitsLearning {
         Assert.assertEquals(infoMessage.getText(), "Code applied ..!");
         Assert.assertTrue(infoMessage.getAttribute("style").contains("green"));
 
+        //Fluent wait
+        // - under category of explicit wait
+        // - Have polling time, example -> timeouts 10s , poll every 1s under condition meet or timeout reach
+        driver.get("https://the-internet.herokuapp.com/dynamic_loading/1");
+        Thread.sleep(2000);
+        driver.findElement(startButton).click();
+
+        Duration timeout = Duration.ofSeconds(10);
+        Duration polling = Duration.ofSeconds(2);
+        Wait<WebDriver> fWait = new FluentWait<WebDriver>(driver)
+                .withTimeout(timeout)
+                .pollingEvery(polling)
+                .ignoring(NoSuchElementException.class);
+
+        WebElement msg = fWait.until(new Function<WebDriver, WebElement>() {
+            @Override
+            public WebElement apply(WebDriver driver) {
+                WebElement el = driver.findElement(helloWorld);
+                if(el.isDisplayed()){
+                    return el;
+                }else{
+                    return null;
+                }
+            }
+        });
+
+        Assert.assertTrue(msg.getText().contains("Hello World"));
+        driver.quit();
     }
 }
