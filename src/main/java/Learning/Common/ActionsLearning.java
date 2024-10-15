@@ -19,11 +19,14 @@ public class ActionsLearning {
     private static By hoverLink = By.cssSelector("a[href='/hovers']");
     private static By contextMenuLink = By.cssSelector("a[href='/context_menu']");
     private static By keyPressLink = By.cssSelector("a[href='/key_presses']");
+    private static By dragAndDropLink = By.cssSelector("a[href='/drag_and_drop']");
     private static By contectClickArea = By.id("hot-spot");
     private static By hoverPageHeader = By.xpath("//h3[text()='Hovers']");
     private static By profiles = By.xpath("(//img[@alt='User Avatar'])");
     private static By userCaption = By.cssSelector("div.figcaption");
     private static By inputTarget = By.id("target");
+    private static By boxALocator = By.id("column-a");
+    private static By boxBLocator = By.id("column-b");
 
 
     // OTHERS
@@ -85,6 +88,19 @@ public class ActionsLearning {
                 .keyUp(Keys.SHIFT).sendKeys("basir")
                 .build().perform();
 
+        driver.navigate().back();
+
+        // drag and drop
+
+        driver.findElement(dragAndDropLink).click();
+        WebElement boxA = driver.findElement(boxALocator);
+        WebElement boxB = driver.findElement(boxBLocator);
+        action.dragAndDrop(boxA, boxB).build().perform();
+        Assert.assertEquals(boxA.findElement(By.tagName("header")).getText(), "B" );
+        Assert.assertEquals(boxB.findElement(By.tagName("header")).getText(), "A" );
+        action.dragAndDrop(boxB, boxA).build().perform();
+        Assert.assertEquals(boxA.findElement(By.tagName("header")).getText(), "A" );
+        Assert.assertEquals(boxB.findElement(By.tagName("header")).getText(), "B" );
 
         //CLEAN UP
         sleep(3500);
