@@ -60,8 +60,6 @@ public class FramesLearning {
         driver.switchTo().parentFrame().switchTo().parentFrame().switchTo().frame(driver.findElement(nestedFrameBottomLocator));
         Assert.assertEquals(driver.findElement(By.tagName("body")).getText(), "BOTTOM");
 
-        driver.switchTo().window()
-
         //CLEAN UP
         System.out.println("DONE! yeaaaaa boy");
         sleep(1000);
