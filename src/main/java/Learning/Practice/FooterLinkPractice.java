@@ -1,13 +1,16 @@
 package Learning.Practice;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.Test;
 
 import java.time.Duration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,7 +26,8 @@ public class FooterLinkPractice {
     private static WebDriver driver;
     private static WebDriverWait wait;
 
-    public static void main(String[] args) throws InterruptedException {
+    @Test
+    public void testLink() throws InterruptedException {
 
         String username = "rahulshettyacademy";
         String password = "learning";
@@ -41,11 +45,11 @@ public class FooterLinkPractice {
 
         WebElement footer = driver.findElement(footerDiv);
         List<WebElement> columns = footer.findElements(By.cssSelector("table.gf-t tr td ul"));
-        System.out.println(columns.size());
-
-        for (int i = 0; i < columns.size(); i++) {
-            System.out.println(columns.get(i).findElement(By.cssSelector("li.gf-li")).getText());
-        }
+//        System.out.println(columns.size());
+//
+//        for (int i = 0; i < columns.size(); i++) {
+//            System.out.println(columns.get(i).findElement(By.cssSelector("li.gf-li")).getText());
+//        }
 
 
         Map<String, String> discountLinks =  getTextAndLinks(columns.get(0));
@@ -53,10 +57,29 @@ public class FooterLinkPractice {
         List<String> contactsLink =  getLinksOnly(columns.get(2));
         Map<String, String> socialsLinks =  getTextAndLinks(columns.get(3));
 
-        System.out.println(discountLinks);
-        System.out.println(newsLinks);
-        System.out.println(contactsLink);
-        System.out.println(socialsLinks);
+//        System.out.println(discountLinks);
+//        System.out.println(newsLinks);
+//        System.out.println(contactsLink);
+//        System.out.println(socialsLinks);
+
+        List<WebElement> discount = columns.get(0).findElements(By.cssSelector("li.gf-li"));
+
+        //start with index = 1 since first link not relevant
+        for (int i = 1; i < discount.size(); i++) {
+            // open in new tab
+            WebElement link = discount.get(i).findElement(By.tagName("a"));
+            link.sendKeys(Keys.chord(Keys.CONTROL, Keys.ENTER));
+
+        }
+
+        Thread.sleep(5000);
+
+        Iterator<String> it = driver.getWindowHandles().iterator();
+        it.next(); //skip first one
+        while(it.hasNext()){
+            driver.switchTo().window(it.next());
+            System.out.println(driver.getTitle());
+        }
 
         //CLEAN UP
         Thread.sleep(3500);
@@ -65,7 +88,7 @@ public class FooterLinkPractice {
 
     private static Map<String, String> getTextAndLinks(WebElement el){
         return el.findElements(links)
-                .stream().skip(1).collect(Collectors.toUnmodifiableMap(
+                .stream().skip(1).collect(Collectors.toMap(
                         element -> element.getText(), element -> element.getAttribute("href")
                 ));
     }
