@@ -57,6 +57,7 @@ public class LoginPagePractice {
         driver.findElement(userNameInput).sendKeys(username);
         driver.findElement(passwordInput).sendKeys(password);
         driver.findElement(userRadioButton).click();
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(userOkayButton)));
         driver.findElement(userOkayButton).click();
 
         Select userType = new Select(driver.findElement(groupDropdown));
